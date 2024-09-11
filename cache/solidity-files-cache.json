@@ -1,0 +1,41 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\Emmanuel T Edmond\\Desktop\\Emmanuel\\poly1\\zkSNARK-circomCIRCUIT-VerifyProof--main\\contracts\\MultiplierVerifier.sol": {
+      "lastModificationDate": 1726063545963,
+      "contentHash": "570f8ebe68944f2c372fb343db4320b3",
+      "sourceName": "contracts/MultiplierVerifier.sol",
+      "solcConfig": {
+        "version": "0.6.11",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.11"
+      ],
+      "artifacts": [
+        "Pairing",
+        "Verifier"
+      ]
+    }
+  }
+}
