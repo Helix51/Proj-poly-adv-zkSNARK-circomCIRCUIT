@@ -1,188 +1,172 @@
-# zkSNARK-circomCIRCUIT-VerifyProof-
-This Project Walks You Through How To Code Different Circuit In circom Program And How To Deploy An Verifier To TestNet like [MumbaiPolygon](https://mumbai.polygonscan.com/) And Generate Any Proof Of Specefic Inputs And Verify Using Verfier                                                                       
+# zkSNARK Circom Circuit Verifier [Polygon Advanced Final Project]
+
+This project guides you through coding various circuits in the Circom programming language and deploying a verifier to a testnet like [Mumbai Polygon](https://mumbai.polygonscan.com/). You will also learn how to generate proofs of specific inputs and verify them using the deployed verifier.
 
 ## Description
-This Project Includes All The Resources That You Needed To Get Started With circom Program for Coding on zkSNARK Circuits                                                 
-First You Need To Know A Little About Circuit Gates These Are The Some Details About Basic Gates Which Includes OR,AND,NOT That You Need To Get Started :                
- 1.AND Gate(andGate):An And Gate Takes In Two Inputs(A,B) And Returns Output(X) Based On The Below Logic:                                                                
- 
-   A and  B ==> X                                                                                                                                                        
-   1 and  0 ==> 0                                                                                                                                                        
-   1 and  1 ==> 1                                                                                                                                                        
-   0 and  0 ==> 0                                                                                                                                                        
-   0 and  1 ==> 0                                                                                                                                                        
 
-2.NOT Gate(notGate):An And Gate Takes In One Inputs(A) And Returns Output(X) Based On The Below Logic:                                                                    
- 
-   A ==> X                                                                                                                                                                
-   1 ==> 0                                                                                                                                                                
-   0 ==> 1                                                                                                                                                                
+This project includes all the necessary resources to get started with Circom programming for zkSNARK circuits. You'll need a basic understanding of circuit gates, such as AND, OR, and NOT gates, to begin coding circuits. Below is a brief explanation of these gates:
 
-3.OR Gate(orGate):An And Gate Takes In Two Inputs(A,B) And Returns Output(x) Based On The Below Logic:                                                                    
- 
-   A  or  B ==> X                                                                                                                                                         
-   1  or  0 ==> 1                                                                                                                                                         
-   1  or  1 ==> 1                                                                                                                                                         
-   0  or  0 ==> 0                                                                                                                                                         
-   0  or  1 ==> 1                                                                                                                                                                          
-These Three Gates Will Be We Using For This Project:                                                                                                                       ![Circuit Diagram](https://authoring.metacrafters.io/assets/cms/Assessment_b05f6ed658.png?updated_at=2023-02-24T00:00:37.278Z) 
+### Basic Logic Gates
 
-**CircuitTemplates**
+1. **AND Gate (andGate)**:  
+   An AND gate takes two inputs (A, B) and returns an output (X) based on the following logic:  
+   
+   | A  | B  | X  |
+   |----|----|----|
+   | 1  | 0  | 0  |
+   | 1  | 1  | 1  |
+   | 0  | 0  | 0  |
+   | 0  | 1  | 0  |
 
-For Creating Each Gates Of This Circuit We Are Using PreMade Template By [circomlib](https://github.com/iden3/circomlib)
+2. **NOT Gate (notGate)**:  
+   A NOT gate takes one input (A) and returns an output (X) based on the following logic:
 
-**This Will Be The Code For This Particular Circuit**
-```
+   | A  | X  |
+   |----|----|
+   | 1  | 0  |
+   | 0  | 1  |
+
+3. **OR Gate (orGate)**:  
+   An OR gate takes two inputs (A, B) and returns an output (X) based on the following logic:
+
+   | A  | B  | X  |
+   |----|----|----|
+   | 1  | 0  | 1  |
+   | 1  | 1  | 1  |
+   | 0  | 0  | 0  |
+   | 0  | 1  | 1  |
+
+These gates form the basis for this project. Here's the corresponding circuit diagram:  
+![Circuit Diagram](https://authoring.metacrafters.io/assets/cms/Assessment_b05f6ed658.png?updated_at=2023-02-24T00:00:37.278Z)
+
+### Circuit Templates
+
+We will use pre-made templates from [Circomlib](https://github.com/iden3/circomlib) to create each gate for this circuit.
+
+### Circuit Code Example
+
+```circom
 pragma circom 2.0.0;
 
-/*This circuit Takes Two Inputs(a,b) And Give Specefic Output(q)*/  
-
 template Multiplier2 () {  
+   // Declare Inputs 
+   signal input a;
+   signal input b;
 
-   //Declare Your Input 
-      signal input a;
-      signal input b;
+   // Declare Signals
+   signal x;
+   signal y;
 
+   // Declare Output
+   signal output q;
 
-  //Declare Your Signal
-      signal x;
-      signal y;
+   // Gates
+   component andGate = AND();
+   component notGate = NOT();
+   component orGate = OR();
 
+   // Circuit Logic
+   andGate.a <== a;
+   andGate.b <== b;
+   notGate.in <== b;
 
-  //Declare Your Output
-      signal output q;
+   x <== andGate.out;
+   y <== notGate.out;
 
+   orGate.a <== x;
+   orGate.b <== y;
 
-  //Declare Your Gate
-      component andGate = AND();
-      component notGate = NOT();
-      component orGate = OR();
-
-
-  //Logic Of Your Circuit
-
-  //Inputs
-      andGate.a <== a;
-      andGate.b <== b;
-      notGate.in <== b;
-  // Declare Signals
-
-      x <== andGate.out;
-      y <== notGate.out;
-  //Declare OrGate Inputs
-
-      orGate.a <== x;
-      orGate.b <== y;
-
-  //Output
-
-      q <== orGate.out;
-
-   
+   q <== orGate.out;
 }
+
 template AND() {
-    signal input a;
-    signal input b;
-    signal output out;
+   signal input a;
+   signal input b;
+   signal output out;
 
-    out <== a*b;
+   out <== a*b;
 }
-template OR() {
-    signal input a;
-    signal input b;
-    signal output out;
 
-    out <== a + b - a*b;
+template OR() {
+   signal input a;
+   signal input b;
+   signal output out;
+
+   out <== a + b - a*b;
 }
 
 template NOT() {
-    signal input in;
-    signal output out;
+   signal input in;
+   signal output out;
 
-    out <== 1 + in - 2*in;
+   out <== 1 + in - 2*in;
 }
 
 component main = Multiplier2();
 ```
 
 ## Getting Started
-For Getting Fired Up You Need To Setup Your Compiler With Necesary Files:                                                                                                 
 
+### Prerequisites
 
-* As For IDE You Can Use Offline IDE Like[Vscode](https://code.visualstudio.com/download) Or You Can Use Online IDE Like [REmix](https://remix.ethereum.org/)Or[Gitpod](https://gitpod.io/)
+To start working on this project, you will need:
 
-            
-* Next You Need To Install Necessary Dependencies:
+- **IDE**: Use an offline IDE like [VSCode](https://code.visualstudio.com/download), or an online one like [Remix](https://remix.ethereum.org/) or [Gitpod](https://gitpod.io/).
+- **Dependencies**:  
+  - Install [Hardhat](https://hardhat.org/)  
+  - Install [Node.js](https://nodejs.org/en/download/current)
 
-        
-   Hardhat:[install](https://hardhat.org/)
- 
-   nodeJs:[install](https://nodejs.org/en/download/current)                                                                                                                 
-
- 
-* Now You Can Design Your On circuit Using Different Types OF Gates Template Provided [HERE!](https://github.com/iden3/circomlib)
-
-         
-* Now You Are Set To GO!!!!!                                                                                                                                                  
 ### Installing
 
-* Now You Need To Install The Project Template Circuit Files By Cloning This Reprository
-  
-* Or If You Need To Start With Fresh You Can Use [TEMPLATE](https://github.com/gmchad/zardkat) here
+- Clone this repository or use a template like [Zardkat](https://github.com/gmchad/zardkat).
+- Install the [dotenv](https://www.npmjs.com/package/dotenv) package to securely manage private keys.
+- Set up your testnet details in the `circuits.config.json` file following the [Hardhat Network tutorial](https://hardhat.org/tutorial/deploying-to-a-live-network).
+- Obtain test MATIC for free from [Alchemy Faucet](https://www.alchemy.com/faucets/polygon-mumbai).
+- Add your `PRIVATE_KEY` in the `.env.example` file and rename it to `.env`.
 
-* After That You Need To Add env File For Making Your Private Keys Secure You Can Install By Going  [here](https://www.npmjs.com/package/dotenv)
-  
-* Next You Need To Setup Your Testnet Details In circuits.config.json By Going To [HardhatNetwork](https://hardhat.org/tutorial/deploying-to-a-live-network)
+### Compilation and Deployment
 
-* Now You Need Some Test MATIC On Your Wallet If You Dont You Can It For Free From [Faucet](https://www.alchemy.com/faucets/polygon-mumbai) here
+1. Install all NPM dependencies:
+   ```bash
+   npm i
+   ```
 
-* You Need To Paste Your `PRIVATE KEY` In .env.example File **PRIVATE_KEY='Your Key Here'**
-  
-* And Change The file Name FROM **env.example ==> .env**
+2. Compile the circuit:
+   ```bash
+   npx hardhat circom
+   ```
+   This generates the circuit intermediaries in the `out` folder and the `MultiplierVerifier.sol` contract.
 
-* Now Lets Run The Program 
-### Executing program
+3. Set input values for AND gate in `input.json`:
+   ```json
+   {
+     "a": "0",
+     "b": "1"
+   }
+   ```
 
-* First install All npm Dependencies By Running:
-  
+4. Deploy the verifier to the Polygon Mumbai Testnet:
+   ```bash
+   npx hardhat run scripts/deploy.ts --network mumbai
+   ```
+
+### Execution
+
+This script performs the following:
+
+1. Deploys the `MultiplierVerifier.sol` contract to Polygon Mumbai Testnet.
+2. Generates a proof with `generateProof()` using input `(0,1)`.
+3. Generates calldata with `generateCallData()`.
+4. Calls `verifyProof()` on the verifier contract with the generated calldata.
+
+You can check the contract on [Mumbai Polygon Scan](https://mumbai.polygonscan.com/) by pasting your contract ID.
+
+## Directory Structure
+
+### Circuits
+
 ```
-npm i
-```
-* Next Lets Compile Our Cicuit By Typing:
-  
-```
-npx hardhat circom
-```
-This will generate the **out** file with circuit intermediaries and geneate the **MultiplierVerifier.sol** contract
-
-* Next We Need To Give The Input For (a,b) For the And Gate For That Just Go To input.json :
-
-```
-{
-  "a": "0",
-  "b": "1"
-}
-```
-This will Be The Input Data While We Generate Our Proof
-
-* Finally We Will Deploy Our Verifier To PolygonMumbai Testnet And Verify Our Proof By:
-
-```
-npx hardhat run scripts/deploy.ts --network mumbai
-```
-This script does 4 things  
-1. Deploys the MultiplierVerifier.sol contract Into PolygonMumbai Testnet
-2. Generates a proof from circuit intermediaries with `generateProof()` With Input(0,1)
-3. Generates calldata with `generateCallData()`
-4. Calls `verifyProof()` on the verifier contract with calldata
-
-With two commands you can compile a ZKP, generate a proof, deploy a verifier, and verify the proof 🎉
-
-You Can Check Your Verifier Contract Creation In [PolygonMumbai Scanio](https://mumbai.polygonscan.com/) By Pasting Your Contract ID
-
-### Directory Structure
-**circuits**
-```
+circuits
 ├── multiplier
 │   ├── circuit.circom
 │   ├── input.json
@@ -191,35 +175,20 @@ You Can Check Your Verifier Contract Creation In [PolygonMumbai Scanio](https://
 │       ├── multiplier.r1cs
 │       ├── multiplier.vkey
 │       └── multiplier.zkey
-├── new-circuit
 └── powersOfTau28_hez_final_12.ptau
 ```
-Each new circuit lives in it's own directory. At the top level of each circuit directory lives the circom circuit and input to the circuit.
-The **out** directory will be autogenerated and store the compiled outputs, keys, and proofs. The Powers of Tau file comes from the Polygon Hermez ceremony, which saves time by not needing a new ceremony. 
 
+### Contracts
 
-**contracts**
 ```
 contracts
 └── MultiplierVerifier.sol
 ```
-Verifier contracts are autogenerated and prefixed by the circuit name, in this example **Multiplier**
-## Help
-This Is Just An Two Command Project So There Is No Way You Gonna Face Any issues
-But You May Encounter ERror Due To Your Wrong Syntax In Circom Programming So Make Sure To Do Your Syntax Correctly
-If You Get Stuck At SomeWhere Or Facing Some Error Or Issue Feel Free To Contact Me On Email I Will Be More Than Happt Help YOu.
-```
-iamoneofthechoosen1@gmail.com
-```
 
-## Authors
+## Author
 
-Contributors names and contact info
-
-Dabi  
-[@VAVAOP](iamoneofthechoosen1@gmail.com)
-
+@Helix51
 
 ## License
 
-This project is licensed under the [Dabi] License - see the LICENSE.md file for details
+This project is not licensed.
